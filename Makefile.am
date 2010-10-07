@@ -1,6 +1,7 @@
 EXTRA_DIST = \
 	ChangeLog \
 	VERSION \
+	src/conv_placement.h \
 	src/save-conv-order.h
 
 

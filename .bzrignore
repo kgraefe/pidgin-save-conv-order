@@ -14,3 +14,4 @@ src/.libs
 src/Makefile
 src/save-conv-order.lo
 src/save_conv_order.la
+src/conv_placement.lo

@@ -1,5 +1,5 @@
 /*
- * Pidgin Save Conversation ORder
+ * Pidgin Save Conversation Order
  * Copyright (C) 2010 Konrad Gräfe
  *
  * This program is free software; you can redistribute it and/or
@@ -22,11 +22,26 @@
 #include <gtkplugin.h>
 #include <version.h>
 #include <util.h>
+#include <prefs.h>
+
+#include "conv_placement.h"
 
 PurplePlugin *plugin;
 
 static gboolean plugin_load(PurplePlugin *_plugin) {
 	plugin = _plugin;
+
+	pidgin_conv_placement_add_fnc(PLUGIN_STATIC_NAME, _("Save Conversation Order"), conv_placement_fnc);
+
+	/* TODO: save&restore old setting */
+	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/placement", PLUGIN_STATIC_NAME);
+	pidgin_conv_placement_set_current_func(pidgin_conv_placement_get_fnc(PLUGIN_STATIC_NAME));
+
+	return TRUE;
+}
+
+static gboolean plugin_unload(PurplePlugin *_plugin) {
+	pidgin_conv_placement_remove_fnc(PLUGIN_STATIC_NAME);
 
 	return TRUE;
 }
@@ -51,7 +66,7 @@ static PurplePluginInfo info = {
 	PLUGIN_WEBSITE,				/**< homepage       */
 
 	plugin_load,				/**< load           */
-	NULL,					/**< unload         */
+	plugin_unload,				/**< unload         */
 	NULL,					/**< destroy        */
 
 	NULL,					/**< ui_info        */
@@ -82,8 +97,8 @@ static void init_plugin(PurplePlugin *plugin) {
 #endif /* ENABLE_NLS */
 
 	info.name        = _("Save Conversation Order");
-	info.summary     = _("");
-	info.description = _("");
+	info.summary     = _(" ");
+	info.description = _(" ");
 }
 
 PURPLE_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)
