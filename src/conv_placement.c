@@ -1,0 +1,182 @@
+/*
+ * Pidgin Save Conversation Order
+ * Copyright (C) 2010 Konrad Gräfe
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301, USA.
+ */
+
+#include "save-conv-order.h"
+
+#include "conv_placement.h"
+
+#include <gtkconv.h>
+#include <gtkconvwin.h>
+#include <pidginstock.h>
+#include <debug.h>
+
+typedef struct _pidgin_conv_desc {
+	gchar *key;
+	PidginWindow *win;
+} PidginConversationDescription;
+
+PidginWindow *win_mix = NULL;
+PidginWindow *win_im = NULL;
+PidginWindow *win_chat = NULL;
+
+GList *conv_descriptions = NULL;
+
+static gboolean gtk_conv_configure_cb(GtkWidget *w, GdkEventConfigure *event, gpointer data) {
+	int x, y;
+
+	if (GTK_WIDGET_VISIBLE(w))
+		gtk_window_get_position(GTK_WINDOW(w), &x, &y);
+	else
+		return FALSE; /* carry on normally */
+
+	/* Workaround for GTK+ bug # 169811 - "configure_event" is fired
+	* when the window is being maximized */
+	if (gdk_window_get_state(w->window) & GDK_WINDOW_STATE_MAXIMIZED)
+		return FALSE;
+
+	/* don't save off-screen positioning */
+	if (x + event->width < 0 ||
+	    y + event->height < 0 ||
+	    x > gdk_screen_width() ||
+	    y > gdk_screen_height())
+		return FALSE; /* carry on normally */
+
+	/* store the position */
+	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/im/x", x);
+	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/im/y", y);
+	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/im/width",  event->width);
+	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/im/height", event->height);
+
+	/* continue to handle event normally */
+	return FALSE;
+
+}
+
+static void destroy_win_cb(GtkWidget *w, gpointer d) {
+	PidginWindow *win = d;
+
+	if(win == win_mix) win_mix = NULL;
+	if(win == win_im) win_im = NULL;
+	if(win == win_chat) win_chat = NULL;
+}
+
+static void notebook_reordered_cb(GtkNotebook *notebook, GtkWidget *child, guint page_num, gpointer user_data) {
+	purple_debug_info(PLUGIN_STATIC_NAME, "notebook_reordered_cb() %i\n", page_num);
+}
+
+static gchar *get_key_from_conversation(PidginConversation *gtkconv) {
+	gchar *ret, *c;
+	const gchar *conv_name, *account_username, *protocol;
+	gchar type;
+	PurpleAccount *account;
+	PurpleConversation *conv = gtkconv->active_conv;
+
+	if(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
+		type = 'I';
+	} else if(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
+		type = 'C';
+	} else {
+		type = 'U';
+	}
+
+	conv_name = purple_conversation_get_name((PurpleConversation *)conv);
+
+	account = purple_conversation_get_account((PurpleConversation *)conv);
+	account_username = purple_account_get_username(account);
+	protocol = purple_account_get_protocol_name(account);
+
+
+	ret = g_strdup_printf("%c_%s_%s_%s", type, conv_name, account_username, protocol);
+
+	c = ret;
+	while(*c != '\0') {
+		if(*c == ' ' || *c == '\n' || *c == '\r') *c = '_';
+		c++;
+	}
+
+	return ret;
+
+}
+
+static void conv_placement_fnc(PidginConversation *conv) {
+	PidginWindow *win = NULL;
+	gboolean separated;
+	PidginConversationDescription *desc;
+
+	separated = purple_prefs_get_bool(PLUGIN_PREFS_PREFIX "/separate_im_and_chat");
+
+	if(separated && purple_conversation_get_type(conv->active_conv) == PURPLE_CONV_TYPE_IM) {
+		win = win_im;
+	} else if(separated && purple_conversation_get_type(conv->active_conv) == PURPLE_CONV_TYPE_CHAT) {
+		win = win_chat;
+	} else {
+		win = win_mix;
+	}
+
+	if(!win) {
+		win = pidgin_conv_window_new();
+
+		if(separated && purple_conversation_get_type(conv->active_conv) == PURPLE_CONV_TYPE_IM) {
+			win_im = win;
+		} else if(separated && purple_conversation_get_type(conv->active_conv) == PURPLE_CONV_TYPE_CHAT) {
+			win_chat = win;
+		} else {
+			win_mix = win;
+		}
+
+		/* TODO: pidgin_conv_set_position_size(...) */
+
+		g_signal_connect(G_OBJECT(win->window), "configure_event", G_CALLBACK(gtk_conv_configure_cb), NULL);
+
+		/* TODO: auftrennen zwischen "im" und "chat" */
+		g_signal_connect(G_OBJECT(win->window), "destroy", G_CALLBACK(destroy_win_cb), win);
+
+		g_signal_connect(G_OBJECT(win->notebook), "page-reordered", G_CALLBACK(notebook_reordered_cb), win);
+
+
+		pidgin_conv_window_show(win);
+	}
+
+	pidgin_conv_window_add_gtkconv(win, conv);
+
+	/* TODO: an vorhandenen anordnen */
+
+	desc = g_malloc(sizeof(PidginConversationDescription));
+	desc->key = get_key_from_conversation(conv);
+	desc->win = win;
+
+	purple_debug_info(PLUGIN_STATIC_NAME, "desc->key: %s\n", desc->key);
+
+	g_list_append(conv_descriptions, desc);
+}
+
+void conv_placement_init(void) {
+	pidgin_conv_placement_add_fnc(PLUGIN_STATIC_NAME, _("Save Conversation Order"), conv_placement_fnc);
+
+	/* TODO: save&restore old setting */
+	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/placement", PLUGIN_STATIC_NAME);
+	pidgin_conv_placement_set_current_func(pidgin_conv_placement_get_fnc(PLUGIN_STATIC_NAME));
+
+}
+
+void conv_placement_uninit(void) {
+	pidgin_conv_placement_remove_fnc(PLUGIN_STATIC_NAME);
+}
+
+

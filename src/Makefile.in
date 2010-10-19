@@ -68,7 +68,8 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(plugindir)"
 LTLIBRARIES = $(plugin_LTLIBRARIES)
 save_conv_order_la_LIBADD =
-am_save_conv_order_la_OBJECTS = save-conv-order.lo
+am_save_conv_order_la_OBJECTS = conv_placement.lo prefs.lo \
+	save-conv-order.lo
 save_conv_order_la_OBJECTS = $(am_save_conv_order_la_OBJECTS)
 save_conv_order_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
@@ -231,6 +232,8 @@ top_srcdir = @top_srcdir@
 plugindir = $(libdir)/pidgin
 plugin_LTLIBRARIES = save_conv_order.la
 save_conv_order_la_SOURCES = \
+	conv_placement.c \
+	prefs.c \
 	save-conv-order.c
 
 save_conv_order_la_LDFLAGS = -module -avoid-version
@@ -308,6 +311,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv_placement.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/prefs.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/save-conv-order.Plo@am__quote@
 
 .c.o:

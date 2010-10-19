@@ -1,1 +1,3 @@
+src/conv_placement.c
+src/prefs.c
 src/save-conv-order.c

@@ -1,5 +1,5 @@
 /*
- * Pidgin Save Conversation ORder
+ * Pidgin Save Conversation Order
  * Copyright (C) 2010 Konrad Gräfe
  *
  * This program is free software; you can redistribute it and/or
@@ -22,14 +22,35 @@
 #include <gtkplugin.h>
 #include <version.h>
 #include <util.h>
+#include <prefs.h>
+
+#include "conv_placement.h"
 
 PurplePlugin *plugin;
 
 static gboolean plugin_load(PurplePlugin *_plugin) {
 	plugin = _plugin;
 
+	conv_placement_init();
+	
 	return TRUE;
 }
+
+static gboolean plugin_unload(PurplePlugin *_plugin) {
+	conv_placement_uninit();
+
+	return TRUE;
+}
+
+static PidginPluginUiInfo ui_info = {
+        get_config_frame,
+        0,   /* page_num (Reserved) */
+        /* Padding */
+        NULL,
+        NULL,
+        NULL,
+        NULL
+};
 
 static PurplePluginInfo info = {
 	PURPLE_PLUGIN_MAGIC,
@@ -51,10 +72,10 @@ static PurplePluginInfo info = {
 	PLUGIN_WEBSITE,				/**< homepage       */
 
 	plugin_load,				/**< load           */
-	NULL,					/**< unload         */
+	plugin_unload,				/**< unload         */
 	NULL,					/**< destroy        */
 
-	NULL,					/**< ui_info        */
+	&ui_info,				/**< ui_info        */
 	NULL,					/**< extra_info     */
 	NULL,					/**< prefs_info     */
 	NULL,					/**< actions        */
@@ -82,8 +103,10 @@ static void init_plugin(PurplePlugin *plugin) {
 #endif /* ENABLE_NLS */
 
 	info.name        = _("Save Conversation Order");
-	info.summary     = _("");
-	info.description = _("");
+	info.summary     = _(" ");
+	info.description = _(" ");
+
+	init_prefs();
 }
 
 PURPLE_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)
