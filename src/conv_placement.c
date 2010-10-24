@@ -117,7 +117,11 @@ static gchar *get_key_from_conversation(PidginConversation *gtkconv) {
 static void conv_placement_fnc(PidginConversation *conv) {
 	PidginWindow *win = NULL;
 	gboolean separated;
-	PidginConversationDescription *desc;
+	PidginConversationDescription *desc, *curdesc;
+	gchar *key;
+	gint pos, curpos;
+	GList *cur, *cur_conv_win, *cur_conv_list, *desc_listentry;
+	PidginConversation *cur_gtkconv;
 
 	separated = purple_prefs_get_bool(PLUGIN_PREFS_PREFIX "/separate_im_and_chat");
 
@@ -153,17 +157,58 @@ static void conv_placement_fnc(PidginConversation *conv) {
 		pidgin_conv_window_show(win);
 	}
 
+	key = get_key_from_conversation(conv);
+
+	/* find conversation */
+	desc = NULL;
+	desc_listentry = NULL;
+	cur = conv_descriptions;
+	while(cur && !desc) {
+		curdesc = (PidginConversationDescription *)cur->data;
+
+		if(purple_utf8_strcasecmp(curdesc->key, key) == 0) {
+			desc = curdesc;
+			desc_listentry = cur;
+		}
+		
+		cur = cur->next;
+	}
+
+	if(!desc) {
+		desc = g_malloc(sizeof(PidginConversationDescription));
+		desc->key = key;
+		conv_descriptions = g_list_append(conv_descriptions, desc);
+		desc_listentry = g_list_last(conv_descriptions);
+	}
+
 	pidgin_conv_window_add_gtkconv(win, conv);
-
-	/* TODO: an vorhandenen anordnen */
-
-	desc = g_malloc(sizeof(PidginConversationDescription));
-	desc->key = get_key_from_conversation(conv);
 	desc->win = win;
 
-	purple_debug_info(PLUGIN_STATIC_NAME, "desc->key: %s\n", desc->key);
+	/* now the new tab is at the bottom */
+	/* search the highest conv that is under the new tab in the list */
+	cur_conv_list = desc_listentry->next;
+	pos = -1;
+	while(cur_conv_list && pos == -1) {
+		curdesc = (PidginConversationDescription *) cur_conv_list->data;
 
-	g_list_append(conv_descriptions, desc);
+		cur_conv_win = win->gtkconvs;
+		curpos = 0;
+		while(cur_conv_win && pos == -1) {
+			cur_gtkconv = (PidginConversation *) cur_conv_win->data;
+
+			if(purple_utf8_strcasecmp(curdesc->key, get_key_from_conversation(cur_gtkconv)) == 0) {
+				pos = curpos;
+			}
+
+			cur_conv_win = cur_conv_win->next;
+			curpos++;
+		}
+
+		cur_conv_list = cur_conv_list->next;
+	}
+
+	gtk_notebook_reorder_child(GTK_NOTEBOOK(win->notebook), gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), -1), pos);
+
 }
 
 void conv_placement_init(void) {
