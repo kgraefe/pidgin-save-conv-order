@@ -247,7 +247,7 @@ static void conv_descriptions_load(void) {
 	PidginConversationDescription *desc;
 
 	/* TODO: PidginConversationDescription's freigeben! */
-	g_list_free(conv_descriptions);
+	if(conv_descriptions) g_list_free(conv_descriptions);
 	conv_descriptions = NULL;
 
 	keys = purple_prefs_get_string_list(PLUGIN_PREFS_PREFIX "/conversation_list");

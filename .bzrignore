@@ -16,3 +16,7 @@ src/save-conv-order.lo
 src/save_conv_order.la
 src/conv_placement.lo
 src/prefs.lo
+DEB_REVISION
+local.mak
+pidgin-save-conv-order-0.2-win32.zip
+src/pidgin-save-conv-order.dll
