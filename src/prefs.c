@@ -56,5 +56,6 @@ void init_prefs(void) {
 	purple_prefs_add_none(PLUGIN_PREFS_PREFIX);
 
 	purple_prefs_add_bool(PLUGIN_PREFS_PREFIX "/separate_im_and_chat", FALSE);
+	purple_prefs_add_string_list(PLUGIN_PREFS_PREFIX "/conversation_list", NULL);
 }
 

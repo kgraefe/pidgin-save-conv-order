@@ -37,6 +37,40 @@ PidginWindow *win_chat = NULL;
 
 GList *conv_descriptions = NULL;
 
+static gchar *get_key_from_conversation(PidginConversation *gtkconv) {
+	gchar *ret, *c;
+	const gchar *conv_name, *account_username, *protocol;
+	gchar type;
+	PurpleAccount *account;
+	PurpleConversation *conv = gtkconv->active_conv;
+
+	if(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
+		type = 'I';
+	} else if(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
+		type = 'C';
+	} else {
+		type = 'U';
+	}
+
+	conv_name = purple_conversation_get_name((PurpleConversation *)conv);
+
+	account = purple_conversation_get_account((PurpleConversation *)conv);
+	account_username = purple_account_get_username(account);
+	protocol = purple_account_get_protocol_name(account);
+
+
+	ret = g_strdup_printf("%c_%s_%s_%s", type, conv_name, account_username, protocol);
+
+	c = ret;
+	while(*c != '\0') {
+		if(*c == ' ' || *c == '\n' || *c == '\r') *c = '_';
+		c++;
+	}
+
+	return ret;
+
+}
+
 static gboolean gtk_conv_configure_cb(GtkWidget *w, GdkEventConfigure *event, gpointer data) {
 	int x, y;
 
@@ -77,41 +111,37 @@ static void destroy_win_cb(GtkWidget *w, gpointer d) {
 }
 
 static void notebook_reordered_cb(GtkNotebook *notebook, GtkWidget *child, guint page_num, gpointer user_data) {
-	purple_debug_info(PLUGIN_STATIC_NAME, "notebook_reordered_cb() %i\n", page_num);
-}
+	PidginConversation *gtkconv;
+	gchar *key;
+	PidginWindow *win = (PidginWindow *)user_data;
+	GList *cur, *before;
+	PidginConversationDescription *desc;
 
-static gchar *get_key_from_conversation(PidginConversation *gtkconv) {
-	gchar *ret, *c;
-	const gchar *conv_name, *account_username, *protocol;
-	gchar type;
-	PurpleAccount *account;
-	PurpleConversation *conv = gtkconv->active_conv;
+	gtkconv = pidgin_conv_window_get_gtkconv_at_index(win, page_num);
+	if(!gtkconv) return;
 
-	if(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
-		type = 'I';
-	} else if(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
-		type = 'C';
-	} else {
-		type = 'U';
+	key = get_key_from_conversation(gtkconv);
+
+	/* find conversation */
+	desc = NULL;
+	cur = conv_descriptions;
+	while(cur && !desc) {
+		desc = (PidginConversationDescription *)cur->data;
+
+		if(purple_utf8_strcasecmp(desc->key, key) != 0) {
+			desc = NULL;
+		}
+		
+		cur = cur->next;
 	}
 
-	conv_name = purple_conversation_get_name((PurpleConversation *)conv);
+	if(!desc) return;
 
-	account = purple_conversation_get_account((PurpleConversation *)conv);
-	account_username = purple_account_get_username(account);
-	protocol = purple_account_get_protocol_name(account);
+	conv_descriptions = g_list_remove(conv_descriptions, desc);
 
+	before = g_list_nth(conv_descriptions, page_num);
 
-	ret = g_strdup_printf("%c_%s_%s_%s", type, conv_name, account_username, protocol);
-
-	c = ret;
-	while(*c != '\0') {
-		if(*c == ' ' || *c == '\n' || *c == '\r') *c = '_';
-		c++;
-	}
-
-	return ret;
-
+	conv_descriptions = g_list_insert_before(conv_descriptions, before, desc);
 }
 
 static void conv_placement_fnc(PidginConversation *conv) {
@@ -211,7 +241,50 @@ static void conv_placement_fnc(PidginConversation *conv) {
 
 }
 
+static void conv_descriptions_load(void) {
+	GList *keys;
+	gchar *key;
+	PidginConversationDescription *desc;
+
+	/* TODO: PidginConversationDescription's freigeben! */
+	g_list_free(conv_descriptions);
+	conv_descriptions = NULL;
+
+	keys = purple_prefs_get_string_list(PLUGIN_PREFS_PREFIX "/conversation_list");
+	while(keys) {
+		key = (gchar *)keys->data;
+
+		desc = g_malloc(sizeof(PidginConversationDescription));
+		desc->key = key;
+		conv_descriptions = g_list_append(conv_descriptions, desc);
+
+		keys = keys->next;
+	}
+}
+
+static void conv_descriptions_save(void) {
+	GList *keys, *cur;
+	PidginConversationDescription *desc;
+
+	cur = conv_descriptions;
+	keys = NULL;
+	while(cur) {
+		desc = (PidginConversationDescription *)cur->data;
+
+		keys = g_list_append(keys, desc->key);
+
+		cur = cur->next;
+	}
+
+	purple_prefs_set_string_list(PLUGIN_PREFS_PREFIX "/conversation_list", keys);
+
+	/* TODO: keys freigeben? */
+
+}
+
 void conv_placement_init(void) {
+	conv_descriptions_load();
+
 	pidgin_conv_placement_add_fnc(PLUGIN_STATIC_NAME, _("Save Conversation Order"), conv_placement_fnc);
 
 	/* TODO: save&restore old setting */
@@ -222,6 +295,8 @@ void conv_placement_init(void) {
 
 void conv_placement_uninit(void) {
 	pidgin_conv_placement_remove_fnc(PLUGIN_STATIC_NAME);
+
+	conv_descriptions_save();
 }
 
 
