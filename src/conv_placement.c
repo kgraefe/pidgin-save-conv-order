@@ -110,12 +110,18 @@ static void destroy_win_cb(GtkWidget *w, gpointer d) {
 	if(win == win_chat) win_chat = NULL;
 }
 
+static gboolean reordered_by_plugin = FALSE;
+
 static void notebook_reordered_cb(GtkNotebook *notebook, GtkWidget *child, guint page_num, gpointer user_data) {
 	PidginConversation *gtkconv;
 	gchar *key;
 	PidginWindow *win = (PidginWindow *)user_data;
 	GList *cur, *before;
 	PidginConversationDescription *desc;
+
+	if(reordered_by_plugin) return;
+
+	purple_debug_info(PLUGIN_STATIC_NAME, "notebook_reordered_cb()\n");
 
 	gtkconv = pidgin_conv_window_get_gtkconv_at_index(win, page_num);
 	if(!gtkconv) return;
@@ -237,7 +243,9 @@ static void conv_placement_fnc(PidginConversation *conv) {
 		cur_conv_list = cur_conv_list->next;
 	}
 
+	reordered_by_plugin = TRUE;
 	gtk_notebook_reorder_child(GTK_NOTEBOOK(win->notebook), gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), -1), pos);
+	reordered_by_plugin = FALSE;
 
 }
 

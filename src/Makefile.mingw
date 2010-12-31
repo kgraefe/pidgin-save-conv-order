@@ -111,7 +111,7 @@ $(PLUGIN_TOP)/config.h: $(PLUGIN_TOP)/config.h.mingw
 ##
 
 $(PLUGIN).dll: $(PIDGIN_DLL).a $(PLUGIN_OBJ)
-	$(CC) -shared $(PLUGIN_OBJ) $(LIB_PATHS) $(PLUGIN_LIBS) $(DLL_LD_FLAGS) -o $(PLUGIN).dll
+	$(CC) -g -shared $(PLUGIN_OBJ) $(LIB_PATHS) $(PLUGIN_LIBS) $(DLL_LD_FLAGS) -o $(PLUGIN).dll
 
 
 ##
