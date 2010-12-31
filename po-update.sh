@@ -1,5 +1,8 @@
 #!/bin/bash
 set -x
+
+ls -1 src/*.c > po/POTFILES.in
+
 cd po
 intltool-update -po
 

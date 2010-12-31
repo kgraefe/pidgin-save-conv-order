@@ -6,6 +6,8 @@ test -f ChangeLog|| exit
 test -f configure.in.in || exit
 test -f COPYING || exit
 
+./po-update || exit
+
 languages=""
 for f in po/*.po
 do test -f $f && languages="$languages $(basename $f .po)"
@@ -19,3 +21,4 @@ automake --add-missing --copy || exit
 autoconf || exit
 libtoolize --copy --install || exit
 intltoolize --copy --force  || exit
+
