@@ -6,7 +6,7 @@ test -f ChangeLog|| exit
 test -f configure.in.in || exit
 test -f COPYING || exit
 
-./po-update || exit
+./po-update.sh || exit
 
 languages=""
 for f in po/*.po
