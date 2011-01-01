@@ -32,7 +32,7 @@ PidginWindow *win_im = NULL;
 PidginWindow *win_chat = NULL;
 
 static gboolean reordered_by_plugin = FALSE;
-static gchar *conv_placement_fnc_ori = NULL;
+static const gchar *conv_placement_fnc_ori = NULL;
 
 static void destroy_win_cb(GtkWidget *w, gpointer d) {
 	PidginWindow *win = d;
