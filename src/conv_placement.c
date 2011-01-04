@@ -136,7 +136,7 @@ static void conv_placement_fnc(PidginConversation *conv) {
 				if(!purple_blist_node_get_int(cur_node, "tab_index")) purple_blist_node_set_int(cur_node, "tab_index", i + 1);
 				if(!purple_blist_node_get_int(prev_node, "tab_index")) purple_blist_node_set_int(prev_node, "tab_index", i);
 
-				if(purple_blist_node_get_int(cur_node, "tab_index") <= purple_blist_node_get_int(prev_node, "tab_index")) {
+				if(purple_blist_node_get_int(cur_node, "tab_index") < purple_blist_node_get_int(prev_node, "tab_index")) {
 					gtk_notebook_reorder_child(GTK_NOTEBOOK(win->notebook), gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), i), i - 1);
 
 					changed = TRUE;
