@@ -103,8 +103,8 @@ static void init_plugin(PurplePlugin *plugin) {
 #endif /* ENABLE_NLS */
 
 	info.name        = _("Save Conversation Order");
-	info.summary     = _(" ");
-	info.description = _(" ");
+	info.summary     = _("This plugin saves the order of chats and IMs and restores it the next time you open a conversation.");
+	info.description = _("This plugin saves the order of chats and IMs and restores it the next time you open a conversation.");
 
 	init_prefs();
 }

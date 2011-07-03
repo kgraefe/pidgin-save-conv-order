@@ -1,5 +1,5 @@
 EXTRA_DIST = \
-	src/conv_placement.h src/internal.h src/prefs.h src/save-conv-order.h src/util.h \
+	@@HEADERFILES@@ \
 	ChangeLog \
 	VERSION \
 	config.h.mingw \

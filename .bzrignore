@@ -18,11 +18,10 @@ src/conv_placement.lo
 src/prefs.lo
 DEB_REVISION
 local.mak
-pidgin-save-conv-order-0.2-win32.zip
 src/pidgin-save-conv-order.dll
-pidgin-save-conv-order-0.1-win32.zip
 src/util.lo
-pidgin-save-conv-order-0.2-win32.zip.asc
-pidgin-save-conv-order-0.2.tar.gz
-pidgin-save-conv-order-0.2.tar.gz.asc
-po/de.gmo
+pidgin-save-conv-order-*-win32.zip
+pidgin-save-conv-order-*-win32.zip.asc
+pidgin-save-conv-order-*.tar.gz
+pidgin-save-conv-order-*.tar.gz.asc
+po/*.gmo

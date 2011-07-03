@@ -241,11 +241,13 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 EXTRA_DIST = \
+	src/conv_placement.h src/internal.h src/prefs.h src/save-conv-order.h src/util.h \
 	ChangeLog \
 	VERSION \
-	src/conv_placement.h \
-	src/prefs.h \
-	src/save-conv-order.h
+	config.h.mingw \
+	src/Makefile.mingw \
+	Makefile.mingw \
+	po/Makefile.mingw
 
 SUBDIRS = src po
 ACLOCAL_AMFLAGS = -I m4
