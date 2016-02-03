@@ -1,7 +1,9 @@
 # German translation for pidgin-save-conv-order
 # Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
 # This file is distributed under the same license as the pidgin-save-conv-order package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+# Translators:
+# Konrad Gräfe <konradgraefe@aol.com>, 2010
 #
 msgid ""
 msgstr ""
