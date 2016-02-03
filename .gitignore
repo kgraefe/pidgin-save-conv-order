@@ -1,3 +1,4 @@
+/Makefile.am
 /config.h
 /config.h.in~
 /config.log
