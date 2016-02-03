@@ -43,13 +43,13 @@ static gboolean plugin_unload(PurplePlugin *_plugin) {
 }
 
 static PidginPluginUiInfo ui_info = {
-        get_config_frame,
-        0,   /* page_num (Reserved) */
-        /* Padding */
-        NULL,
-        NULL,
-        NULL,
-        NULL
+	get_config_frame,
+	0,   /* page_num (Reserved) */
+	/* Padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo info = {

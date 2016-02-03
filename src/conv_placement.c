@@ -37,17 +37,27 @@ static const gchar *conv_placement_fnc_ori = NULL;
 static void destroy_win_cb(GtkWidget *w, gpointer d) {
 	PidginWindow *win = d;
 
-	if(win == win_mix) win_mix = NULL;
-	if(win == win_im) win_im = NULL;
-	if(win == win_chat) win_chat = NULL;
+	if(win == win_mix) {
+		win_mix = NULL;
+	}
+	if(win == win_im) {
+		win_im = NULL;
+	}
+	if(win == win_chat) {
+		win_chat = NULL;
+	}
 }
 
-static void notebook_reordered_cb(GtkNotebook *notebook, GtkWidget *child, guint page_num, gpointer user_data) {
+static void notebook_reordered_cb(
+	GtkNotebook *notebook, GtkWidget *child, guint page_num, gpointer user_data
+) {
 	PurpleBlistNode *node;
 	PidginWindow *win = (PidginWindow *)user_data;
 	gint i;
 
-	if(reordered_by_plugin) return;
+	if(reordered_by_plugin) {
+		return;
+	}
 
 	purple_debug_info(PLUGIN_STATIC_NAME, "notebook_reordered_cb()\n");
 
@@ -90,18 +100,23 @@ static void conv_placement_fnc(PidginConversation *conv) {
 			win_mix = win;
 		}
 
-		if(purple_conversation_get_type(conv->active_conv) == PURPLE_CONV_TYPE_IM || purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/width") == 0) {
+		if(
+			purple_conversation_get_type(conv->active_conv) == PURPLE_CONV_TYPE_IM ||
+			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/width") == 0
+		) {
 			pidgin_conv_set_position_size(win,
 				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/x"),
 				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/y"),
 				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/width"),
-				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/height"));
+				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/height")
+			);
 		} else if(purple_conversation_get_type(conv->active_conv) == PURPLE_CONV_TYPE_CHAT) {
 			pidgin_conv_set_position_size(win,
 				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/x"),
 				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/y"),
 				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/width"),
-				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/height"));
+				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/height")
+			);
 		}
 
 
@@ -133,16 +148,32 @@ static void conv_placement_fnc(PidginConversation *conv) {
 
 			if(cur_node && prev_node) {
 				/* +1 to not let it be 0 (since this is the indicator of an unset setting) */
-				if(!purple_blist_node_get_int(cur_node, "tab_index")) purple_blist_node_set_int(cur_node, "tab_index", i + 1);
-				if(!purple_blist_node_get_int(prev_node, "tab_index")) purple_blist_node_set_int(prev_node, "tab_index", i);
+				if(!purple_blist_node_get_int(cur_node, "tab_index")) {
+					purple_blist_node_set_int(cur_node, "tab_index", i + 1);
+				}
 
-				if(purple_blist_node_get_int(cur_node, "tab_index") < purple_blist_node_get_int(prev_node, "tab_index")) {
-					gtk_notebook_reorder_child(GTK_NOTEBOOK(win->notebook), gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), i), i - 1);
+				if(!purple_blist_node_get_int(prev_node, "tab_index")) {
+					purple_blist_node_set_int(prev_node, "tab_index", i);
+				}
+
+				if(
+					purple_blist_node_get_int(cur_node, "tab_index")
+					< purple_blist_node_get_int(prev_node, "tab_index")
+				) {
+					gtk_notebook_reorder_child(
+						GTK_NOTEBOOK(win->notebook),
+						gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), i),
+						i - 1
+					);
 
 					changed = TRUE;
 				}
 			} else if(cur_node) {
-				gtk_notebook_reorder_child(GTK_NOTEBOOK(win->notebook), gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), i), i - 1);
+				gtk_notebook_reorder_child(
+					GTK_NOTEBOOK(win->notebook),
+					gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), i),
+					i - 1
+				);
 
 				changed = TRUE;
 			}
@@ -150,8 +181,6 @@ static void conv_placement_fnc(PidginConversation *conv) {
 		}
 	}
 	reordered_by_plugin = FALSE;
-
-
 }
 
 void conv_placement_init(void) {

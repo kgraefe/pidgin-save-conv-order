@@ -25,13 +25,13 @@
 #include <pidgin.h>
 
 static void toggle_cb(GtkWidget *widget, gpointer data) {
-        gboolean value;
-        gchar *pref;
+	gboolean value;
+	gchar *pref;
 
-        value = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
-        pref = (gchar *) data;
+	value = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+	pref = (gchar *) data;
 
-        purple_prefs_set_bool(pref, value);
+	purple_prefs_set_bool(pref, value);
 }
 
 GtkWidget *get_config_frame(PurplePlugin *plugin) {
@@ -45,8 +45,15 @@ GtkWidget *get_config_frame(PurplePlugin *plugin) {
 
 	toggle = gtk_check_button_new_with_mnemonic(_("Separate IMs and Chats"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), purple_prefs_get_bool(PLUGIN_PREFS_PREFIX "/separate_im_and_chat"));
-	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(toggle_cb), PLUGIN_PREFS_PREFIX "/separate_im_and_chat");
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(toggle),
+		purple_prefs_get_bool(PLUGIN_PREFS_PREFIX "/separate_im_and_chat")
+	);
+	g_signal_connect(
+		G_OBJECT(toggle),
+		"toggled", G_CALLBACK(toggle_cb),
+		PLUGIN_PREFS_PREFIX "/separate_im_and_chat"
+	);
 
 	return ret;
 }

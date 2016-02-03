@@ -26,25 +26,30 @@ gboolean gtk_conv_configure_cb(GtkWidget *w, GdkEventConfigure *event, PidginCon
 	PurpleConversationType type = purple_conversation_get_type(conv->active_conv);
 	GList *all;
 
-	if (GTK_WIDGET_VISIBLE(w))
+	if(GTK_WIDGET_VISIBLE(w)) {
 		gtk_window_get_position(GTK_WINDOW(w), &x, &y);
-	else
+	} else {
 		return FALSE; /* carry on normally */
+	}
 
 	/* Workaround for GTK+ bug # 169811 - "configure_event" is fired
 	* when the window is being maximized */
-	if (gdk_window_get_state(w->window) & GDK_WINDOW_STATE_MAXIMIZED)
+	if(gdk_window_get_state(w->window) & GDK_WINDOW_STATE_MAXIMIZED) {
 		return FALSE;
+	}
 
 	/* don't save off-screen positioning */
-	if (x + event->width < 0 ||
+	if(
+		x + event->width < 0 ||
 	    y + event->height < 0 ||
 	    x > gdk_screen_width() ||
-	    y > gdk_screen_height())
+	    y > gdk_screen_height()
+	) {
 		return FALSE; /* carry on normally */
+	}
 
-	for (all = conv->convs; all != NULL; all = all->next) {
-		if (type != purple_conversation_get_type(all->data)) {
+	for(all = conv->convs; all != NULL; all = all->next) {
+		if(type != purple_conversation_get_type(all->data)) {
 			/* this window has different types of conversation, don't save */
 			return FALSE;
 		}
@@ -70,22 +75,26 @@ gboolean gtk_conv_configure_cb(GtkWidget *w, GdkEventConfigure *event, PidginCon
 
 void pidgin_conv_set_position_size(PidginWindow *win, int conv_x, int conv_y, int conv_width, int conv_height)
 {
-	 /* if the window exists, is hidden, we're saving positions, and the
-	  * position is sane... */
-	if (win && win->window &&
-			!GTK_WIDGET_VISIBLE(win->window) && conv_width != 0) {
-
+	 /* Check if the window exists, is hidden, we're saving positions, and the
+	  * position is sane...
+	  */
+	if(
+		win && win->window &&
+		!GTK_WIDGET_VISIBLE(win->window) && conv_width != 0
+	) {
 #ifdef _WIN32  /* only override window manager placement on Windows */
 		/* ...check position is on screen... */
-		if (conv_x >= gdk_screen_width())
+		if(conv_x >= gdk_screen_width()) {
 			conv_x = gdk_screen_width() - 100;
-		else if (conv_x + conv_width < 0)
+		} else if(conv_x + conv_width < 0) {
 			conv_x = 100;
+		}
 
-		if (conv_y >= gdk_screen_height())
+		if(conv_y >= gdk_screen_height()) {
 			conv_y = gdk_screen_height() - 100;
-		else if (conv_y + conv_height < 0)
+		} else if(conv_y + conv_height < 0) {
 			conv_y = 100;
+		}
 
 		/* ...and move it back. */
 		gtk_window_move(GTK_WINDOW(win->window), conv_x, conv_y);
@@ -97,12 +106,15 @@ void pidgin_conv_set_position_size(PidginWindow *win, int conv_x, int conv_y, in
 
 PurpleBlistNode *find_blist_node(PidginConversation *conv) {
 	if(purple_conversation_get_type(conv->active_conv) == PURPLE_CONV_TYPE_IM) {
-		return (PurpleBlistNode *)purple_find_buddy(conv->active_conv->account, conv->active_conv->name);
+		return (PurpleBlistNode *)purple_find_buddy(
+			conv->active_conv->account, conv->active_conv->name
+		);
 	} else if(purple_conversation_get_type(conv->active_conv) == PURPLE_CONV_TYPE_CHAT) {
-		return (PurpleBlistNode *)purple_blist_find_chat(conv->active_conv->account, conv->active_conv->name);
+		return (PurpleBlistNode *)purple_blist_find_chat(
+			conv->active_conv->account, conv->active_conv->name
+		);
 	} else {
 		return NULL;
 	}
 }
-
 
