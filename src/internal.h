@@ -23,6 +23,10 @@
 #include <glib.h>
 
 #if GLIB_CHECK_VERSION(2,4,0)
+#ifndef __APPLE_CC__
+#define __APPLE_CC__ 0
+#endif
+
 #include <glib/gi18n-lib.h>
 #else
 #include <locale.h>
