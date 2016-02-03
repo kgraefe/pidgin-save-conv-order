@@ -22,7 +22,7 @@ installed Pidgin through your package manager, it is most likely installed into
 `/usr` (i.e. `which pidgin` returns `/usr/bin/pidgin`). Use
 `./configure --prefix=/usr` in this case.
 
-**Note:** When you use the repository directly or one of those auto-generated "Source code" archives, you need to run `./autogen.sh` before running `./configure.sh`.
+**Note:** When you use the repository directly or one of those auto-generated "Source code" archives, you need to run `./autogen.sh` before running `./configure`.
 
 
 ## Building on Windows
