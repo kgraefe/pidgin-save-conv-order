@@ -47,3 +47,4 @@ Makefile.in
 /install-sh
 /missing
 /stamp-h1
+/share/appdata/pidgin-save-conv-order.metainfo.xml

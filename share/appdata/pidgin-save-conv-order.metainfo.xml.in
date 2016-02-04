@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="addon">
+	<id>pidgin-save-conv-order</id>
+	<extends>pidgin.desktop</extends>
+	<metadata_license>CC0-1.0</metadata_license>
+	<project_license>GPL-2.0</project_license>
+
+	<name>Pidgin Save Conversation Order</name>
+	<updatecontact>konradgraefe@aol.com</updatecontact>
+
+	<_summary>Pidgin Pidgin Save Conversation Order</_summary>
+	<description>
+		<_p>
+			This plugin saves the order of chats and IMs and restores it the next time you open a conversation.
+		</_p>
+	</description>
+	<url type="homepage">https://github.com/kgraefe/pidgin-save-conv-order</url>
+	<url type="bugtracker">https://github.com/kgraefe/pidgin-save-conv-order/issues</url>
+</component>
+
