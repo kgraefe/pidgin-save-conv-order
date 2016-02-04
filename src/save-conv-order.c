@@ -24,33 +24,165 @@
 #include <util.h>
 #include <prefs.h>
 
-#include "conv_placement.h"
-
 PurplePlugin *plugin;
+static gboolean reordered_by_plugin = FALSE;
+static GList *windows;
+
+static void window_reorder(PidginWindow *win) {
+	gboolean changed;
+	PidginConversation *cur_conv, *prev_conv;
+	PurpleBlistNode *cur_node, *prev_node;
+	gint cur_tabidx, prev_tabidx, pos;
+
+	if(reordered_by_plugin) {
+		return;
+	}
+	reordered_by_plugin = TRUE;
+
+	/* Bubble sort:
+	 *	- Larger tab index goes to the end.
+	 *	- New conversations (tab index = 0) go to the end as well.
+	 */
+	do {
+		changed = FALSE;
+
+		for(pos = pidgin_conv_window_get_gtkconv_count(win) - 1; pos > 0; pos--) {
+			cur_conv = pidgin_conv_window_get_gtkconv_at_index(win, pos);
+			prev_conv = pidgin_conv_window_get_gtkconv_at_index(win, pos - 1);
+
+			cur_node = find_blist_node(cur_conv);
+			prev_node = find_blist_node(prev_conv);
+
+			if(cur_node && prev_node) {
+				cur_tabidx = purple_blist_node_get_int(cur_node, "tab_index");
+				prev_tabidx = purple_blist_node_get_int(prev_node, "tab_index");
+
+				if(
+					(cur_tabidx && cur_tabidx < prev_tabidx) ||
+					prev_tabidx == 0
+				) {
+					gtk_notebook_reorder_child(
+						GTK_NOTEBOOK(win->notebook),
+						gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), pos),
+						pos - 1
+					);
+
+					changed = TRUE;
+				}
+			} else if(cur_node) {
+				gtk_notebook_reorder_child(
+					GTK_NOTEBOOK(win->notebook),
+					gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), pos),
+					pos - 1
+				);
+
+				changed = TRUE;
+			}
+		}
+	} while(changed);
+
+	reordered_by_plugin = FALSE;
+}
+static void window_reordered_cb(
+	GtkNotebook *notebook, GtkWidget *child, guint page_num, gpointer d
+) {
+	gint pos, tabidx, next_tabidx;
+	PidginWindow *win = d;
+	PurpleBlistNode *node;
+
+	if(reordered_by_plugin) {
+		return;
+	}
+
+	next_tabidx = 1; /* 0 is reserved for 'not set' */
+	for(pos = 0; pos < pidgin_conv_window_get_gtkconv_count(win); pos++) {
+		node = find_blist_node(pidgin_conv_window_get_gtkconv_at_index(win, pos));
+
+		if(node) {
+			tabidx = purple_blist_node_get_int(node, "tab_index");
+			if(tabidx > next_tabidx) {
+				next_tabidx = tabidx + 1;
+			} else {
+				purple_blist_node_set_int(node, "tab_index", next_tabidx);
+				next_tabidx++;
+			}
+		}
+	}
+}
+static void window_destroyed_cb(GtkWidget *w, gpointer d) {
+	PidginWindow *win = d;
+
+	g_signal_handlers_disconnect_matched(
+		G_OBJECT(win->notebook),
+		G_SIGNAL_MATCH_FUNC | G_SIGNAL_MATCH_DATA,
+		0, 0, 0,
+		G_CALLBACK(window_reordered_cb), win
+	);
+
+	g_signal_handlers_disconnect_matched(
+		G_OBJECT(win->window),
+		G_SIGNAL_MATCH_FUNC | G_SIGNAL_MATCH_DATA,
+		0, 0, 0,
+		G_CALLBACK(window_destroyed_cb), win
+	);
+
+	windows = g_list_remove(windows, win);
+}
+static void window_add(PidginWindow *win) {
+	if(g_list_find(windows, win) == NULL) {
+		windows = g_list_append(windows, win);
+
+		g_signal_connect(
+			G_OBJECT(win->notebook), "page-reordered", 
+			G_CALLBACK(window_reordered_cb), win
+		);
+		g_signal_connect(
+			G_OBJECT(win->window), "destroy", 
+			G_CALLBACK(window_destroyed_cb), win
+		);
+	}
+	window_reorder(win);
+}
+
+static void conversation_displayed_cb(PidginConversation *gtkconv) {
+	if(gtkconv->win) {
+		window_add(gtkconv->win);
+	}
+}
 
 static gboolean plugin_load(PurplePlugin *_plugin) {
+	GList *wins;
+	void *gtk_conv_handle = pidgin_conversations_get_handle();
+
 	plugin = _plugin;
 
-	conv_placement_init();
+	purple_signal_connect(
+		gtk_conv_handle, "conversation-displayed",
+		plugin, PURPLE_CALLBACK(conversation_displayed_cb),
+		NULL
+	);
+
+	wins = pidgin_conv_windows_get_list();
+	while(wins) {
+		window_add(wins->data);
+
+		wins = wins->next;
+	}
+
 	
 	return TRUE;
 }
 
 static gboolean plugin_unload(PurplePlugin *_plugin) {
-	conv_placement_uninit();
+	void *gtk_conv_handle = pidgin_conversations_get_handle();
+
+	purple_signal_disconnect(
+		gtk_conv_handle, "conversation-displayed",
+		plugin, PURPLE_CALLBACK(conversation_displayed_cb)
+	);
 
 	return TRUE;
 }
-
-static PidginPluginUiInfo ui_info = {
-	get_config_frame,
-	0,   /* page_num (Reserved) */
-	/* Padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
 
 static PurplePluginInfo info = {
 	PURPLE_PLUGIN_MAGIC,
@@ -75,7 +207,7 @@ static PurplePluginInfo info = {
 	plugin_unload,				/**< unload         */
 	NULL,					/**< destroy        */
 
-	&ui_info,				/**< ui_info        */
+	NULL,					/**< ui_info        */
 	NULL,					/**< extra_info     */
 	NULL,					/**< prefs_info     */
 	NULL,					/**< actions        */
@@ -105,8 +237,6 @@ static void init_plugin(PurplePlugin *plugin) {
 	info.name        = _("Save Conversation Order");
 	info.summary     = _("This plugin saves the order of chats and IMs and restores it the next time you open a conversation.");
 	info.description = _("This plugin saves the order of chats and IMs and restores it the next time you open a conversation.");
-
-	init_prefs();
 }
 
 PURPLE_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)

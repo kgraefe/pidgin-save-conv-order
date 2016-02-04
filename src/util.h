@@ -20,17 +20,8 @@
 #ifndef _UTIL_H
 #define _UTIL_H
 
-#include <gtk/gtk.h>
 #include <gtkconv.h>
 
-gboolean gtk_conv_configure_cb(
-	GtkWidget *w, GdkEventConfigure *event, PidginConversation *conv
-);
-
 PurpleBlistNode *find_blist_node(PidginConversation *conv);
-
-void pidgin_conv_set_position_size(PidginWindow *win,
-	int conv_x, int conv_y, int conv_width, int conv_height
-);
 
 #endif /* _UTIL_H */

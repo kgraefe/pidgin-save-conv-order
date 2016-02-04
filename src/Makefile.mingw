@@ -62,8 +62,6 @@ LIB_PATHS =             \
 ##
 
 PLUGIN_SRC =	\
-	conv_placement.c \
-	prefs.c \
 	util.c \
 	save-conv-order.c
 
