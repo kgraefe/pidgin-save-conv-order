@@ -41,4 +41,10 @@ Now you can build the plugin:
 
 ## Contribution
 
+### Code
 We love patches. :heart: Please fork the project, do your changes and make a pull request.
+
+### Translations
+Help translating this project on [Transifex](https://www.transifex.com/projects/p/pidgin-save-conv-order/).
+
+![Transifex Statistics](https://www.transifex.com/projects/p/pidgin-save-conv-order/resource/base/chart/image_png)
