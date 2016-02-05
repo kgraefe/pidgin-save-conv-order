@@ -27,8 +27,14 @@ build: config.h
 config.h: VERSION configure.ac scripts/gen-mingw-config_h.sh
 	./scripts/gen-mingw-config_h.sh > config.h
 
+
+# If configure.ac.in exists, we generate configure.ac. Otherwise we assume that
+# configure.ac exists (as in the release tarball).
+ifneq ("$(wildcard configure.ac.in)", "")
 configure.ac: configure.ac.in
 	./scripts/gen-configure_ac.sh > configure.ac
+endif
+
 
 dist: $(PLUGIN_WIN32_ZIP)
 
