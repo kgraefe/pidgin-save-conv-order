@@ -55,8 +55,8 @@ static void window_reorder(PidginWindow *win) {
 	reordered_by_plugin = TRUE;
 
 	/* Bubble sort:
-	 *	- Larger tab index goes to the end.
-	 *	- New conversations (tab index = 0) go to the end as well.
+	 *  - Larger tab index goes to the end.
+	 *  - New conversations (tab index = 0) go to the end as well.
 	 */
 	do {
 		changed = FALSE;
@@ -68,23 +68,21 @@ static void window_reorder(PidginWindow *win) {
 			cur_node = pidgin_conv_find_blist_node(cur_conv);
 			prev_node = pidgin_conv_find_blist_node(prev_conv);
 
-			if(cur_node && prev_node) {
+			if(cur_node) {
 				cur_tabidx = purple_blist_node_get_int(cur_node, "tab_index");
+			} else {
+				cur_tabidx = 0;
+			}
+			if(prev_node) {
 				prev_tabidx = purple_blist_node_get_int(prev_node, "tab_index");
+			} else {
+				prev_tabidx = 0;
+			}
 
-				if(
-					(cur_tabidx && cur_tabidx < prev_tabidx) ||
-					prev_tabidx == 0
-				) {
-					gtk_notebook_reorder_child(
-						GTK_NOTEBOOK(win->notebook),
-						gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), pos),
-						pos - 1
-					);
-
-					changed = TRUE;
-				}
-			} else if(cur_node) {
+			if(
+				(cur_tabidx && cur_tabidx < prev_tabidx) ||
+				(cur_tabidx && prev_tabidx == 0)
+			) {
 				gtk_notebook_reorder_child(
 					GTK_NOTEBOOK(win->notebook),
 					gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), pos),
