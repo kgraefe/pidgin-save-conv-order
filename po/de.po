@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin Save Conversation Order\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-04 10:46+0100\n"
-"PO-Revision-Date: 2016-02-04 09:59+0000\n"
+"POT-Creation-Date: 2016-02-05 10:46+0100\n"
+"PO-Revision-Date: 2016-02-05 09:47+0000\n"
 "Last-Translator: Konrad Gräfe <konradgraefe@aol.com>\n"
 "Language-Team: German (http://www.transifex.com/kgraefe/pidgin-save-conv-order/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -18,16 +18,17 @@ msgstr ""
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../src/conv_placement.c:187 ../src/save-conv-order.c:105
+#: ../src/save-conv-order.c:249
 msgid "Save Conversation Order"
 msgstr "Reihenfolge der Konversationen speichern"
 
-#: ../src/prefs.c:46
-msgid "Separate IMs and Chats"
-msgstr "Sofortnachrichten und Chats trennen"
-
-#: ../src/save-conv-order.c:106 ../src/save-conv-order.c:107
+#: ../src/save-conv-order.c:250 ../src/save-conv-order.c:251
+#: ../share/appdata/pidgin-save-conv-order.metainfo.xml.in.h:2
 msgid ""
 "This plugin saves the order of chats and IMs and restores it the next time "
 "you open a conversation."
 msgstr "Dieses Plugin speichert die Reihenfolge von Chats und IMs und stellt diese wieder her, wenn eine neue Konversation geöffnet wird."
+
+#: ../share/appdata/pidgin-save-conv-order.metainfo.xml.in.h:1
+msgid "Pidgin Save Conversation Order"
+msgstr ""

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin Save Conversation Order\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-04 10:46+0100\n"
-"PO-Revision-Date: 2016-02-04 09:56+0000\n"
+"POT-Creation-Date: 2016-02-05 10:46+0100\n"
+"PO-Revision-Date: 2016-02-05 09:47+0000\n"
 "Last-Translator: Konrad Gräfe <konradgraefe@aol.com>\n"
 "Language-Team: Serbian (http://www.transifex.com/kgraefe/pidgin-save-conv-order/language/sr/)\n"
 "MIME-Version: 1.0\n"
@@ -17,16 +17,17 @@ msgstr ""
 "Language: sr\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: ../src/conv_placement.c:187 ../src/save-conv-order.c:105
+#: ../src/save-conv-order.c:249
 msgid "Save Conversation Order"
 msgstr "Сачувај редослед разговора"
 
-#: ../src/prefs.c:46
-msgid "Separate IMs and Chats"
-msgstr "Одвој брзе поруке и ћаскања"
-
-#: ../src/save-conv-order.c:106 ../src/save-conv-order.c:107
+#: ../src/save-conv-order.c:250 ../src/save-conv-order.c:251
+#: ../share/appdata/pidgin-save-conv-order.metainfo.xml.in.h:2
 msgid ""
 "This plugin saves the order of chats and IMs and restores it the next time "
 "you open a conversation."
 msgstr "Овај прикључак чува редослед ћаскања и брзих порука и враћа их приликом следећег отварања разговора."
+
+#: ../share/appdata/pidgin-save-conv-order.metainfo.xml.in.h:1
+msgid "Pidgin Save Conversation Order"
+msgstr ""

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin Save Conversation Order\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-04 10:46+0100\n"
-"PO-Revision-Date: 2016-02-04 09:56+0000\n"
+"POT-Creation-Date: 2016-02-05 10:46+0100\n"
+"PO-Revision-Date: 2016-02-05 09:47+0000\n"
 "Last-Translator: Konrad Gräfe <konradgraefe@aol.com>\n"
 "Language-Team: French (http://www.transifex.com/kgraefe/pidgin-save-conv-order/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -18,16 +18,17 @@ msgstr ""
 "Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: ../src/conv_placement.c:187 ../src/save-conv-order.c:105
+#: ../src/save-conv-order.c:249
 msgid "Save Conversation Order"
 msgstr "Enregistrer l'ordre des conversations"
 
-#: ../src/prefs.c:46
-msgid "Separate IMs and Chats"
-msgstr ""
-
-#: ../src/save-conv-order.c:106 ../src/save-conv-order.c:107
+#: ../src/save-conv-order.c:250 ../src/save-conv-order.c:251
+#: ../share/appdata/pidgin-save-conv-order.metainfo.xml.in.h:2
 msgid ""
 "This plugin saves the order of chats and IMs and restores it the next time "
 "you open a conversation."
+msgstr ""
+
+#: ../share/appdata/pidgin-save-conv-order.metainfo.xml.in.h:1
+msgid "Pidgin Save Conversation Order"
 msgstr ""
