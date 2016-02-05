@@ -56,6 +56,7 @@ $(PLUGIN_WIN32_ZIP): build
 clean:
 	$(MAKE) -C $(PLUGIN_SRC) -f Makefile.mingw clean
 	$(MAKE) -C $(PLUGIN_PO) -f Makefile.mingw clean
-	rm -f config.h configure.ac
+	rm -f config.h
+	test -f configure.ac.in && rm -f configure.ac
 	rm -rf win32-install-dir
 	rm -f $(PLUGIN_WIN32_ZIP)
