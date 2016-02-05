@@ -20,13 +20,28 @@
 #include "save-conv-order.h"
 
 #include <gtkplugin.h>
+#include <gtkconv.h>
 #include <version.h>
-#include <util.h>
-#include <prefs.h>
 
-PurplePlugin *plugin;
 static gboolean reordered_by_plugin = FALSE;
 static GList *windows;
+
+static PurpleBlistNode *pidgin_conv_find_blist_node(PidginConversation *conv) {
+	switch(purple_conversation_get_type(conv->active_conv)) {
+	case PURPLE_CONV_TYPE_IM:
+		return (PurpleBlistNode *)purple_find_buddy(
+			conv->active_conv->account, conv->active_conv->name
+		);
+	
+	case PURPLE_CONV_TYPE_CHAT:
+		return (PurpleBlistNode *)purple_blist_find_chat(
+			conv->active_conv->account, conv->active_conv->name
+		);
+	
+	default:
+		return NULL;
+	}
+}
 
 static void window_reorder(PidginWindow *win) {
 	gboolean changed;
@@ -50,8 +65,8 @@ static void window_reorder(PidginWindow *win) {
 			cur_conv = pidgin_conv_window_get_gtkconv_at_index(win, pos);
 			prev_conv = pidgin_conv_window_get_gtkconv_at_index(win, pos - 1);
 
-			cur_node = find_blist_node(cur_conv);
-			prev_node = find_blist_node(prev_conv);
+			cur_node = pidgin_conv_find_blist_node(cur_conv);
+			prev_node = pidgin_conv_find_blist_node(prev_conv);
 
 			if(cur_node && prev_node) {
 				cur_tabidx = purple_blist_node_get_int(cur_node, "tab_index");
@@ -96,7 +111,7 @@ static void window_reordered_cb(
 
 	next_tabidx = 1; /* 0 is reserved for 'not set' */
 	for(pos = 0; pos < pidgin_conv_window_get_gtkconv_count(win); pos++) {
-		node = find_blist_node(pidgin_conv_window_get_gtkconv_at_index(win, pos));
+		node = pidgin_conv_find_blist_node(pidgin_conv_window_get_gtkconv_at_index(win, pos));
 
 		if(node) {
 			tabidx = purple_blist_node_get_int(node, "tab_index");
@@ -150,11 +165,9 @@ static void conversation_displayed_cb(PidginConversation *gtkconv) {
 	}
 }
 
-static gboolean plugin_load(PurplePlugin *_plugin) {
+static gboolean plugin_load(PurplePlugin *plugin) {
 	GList *wins;
 	void *gtk_conv_handle = pidgin_conversations_get_handle();
-
-	plugin = _plugin;
 
 	purple_signal_connect(
 		gtk_conv_handle, "conversation-displayed",
@@ -172,8 +185,7 @@ static gboolean plugin_load(PurplePlugin *_plugin) {
 	
 	return TRUE;
 }
-
-static gboolean plugin_unload(PurplePlugin *_plugin) {
+static gboolean plugin_unload(PurplePlugin *plugin) {
 	void *gtk_conv_handle = pidgin_conversations_get_handle();
 
 	purple_signal_disconnect(

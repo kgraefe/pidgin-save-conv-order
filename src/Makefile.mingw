@@ -62,7 +62,6 @@ LIB_PATHS =             \
 ##
 
 PLUGIN_SRC =	\
-	util.c \
 	save-conv-order.c
 
 PLUGIN_OBJ = $(PLUGIN_SRC:%.c=%.o)

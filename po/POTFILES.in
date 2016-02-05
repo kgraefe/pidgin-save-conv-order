@@ -1,3 +1,2 @@
 src/save-conv-order.c
-src/util.c
 share/appdata/pidgin-save-conv-order.metainfo.xml.in
