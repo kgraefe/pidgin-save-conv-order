@@ -15,7 +15,6 @@ AC_DEFINE_UNQUOTED(PLUGIN_WEBSITE, ["https://github.com/kgraefe/pidgin-save-conv
 AC_DEFINE_UNQUOTED(PLUGIN_ID, ["gtk-freakazoid-save-conv-order"], [Define the plugin website to be used])
 
 AC_DEFINE_UNQUOTED(PLUGIN_STATIC_NAME, ["save-conv-order"], [Define the plugin website to be used])
-AC_DEFINE_UNQUOTED(PLUGIN_PREFS_PREFIX, ["/plugins/gtk/save-conv-order"], [Define the plugin website to be used])
 
 AC_DEFINE_UNQUOTED(PLUGIN_AUTHOR, ["Konrad Gräfe <konradgraefe@aol.com>"], [Define the plugin author to be used])
 
