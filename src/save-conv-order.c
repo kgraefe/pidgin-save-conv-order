@@ -193,6 +193,10 @@ static gboolean plugin_unload(PurplePlugin *plugin) {
 		plugin, PURPLE_CALLBACK(conversation_displayed_cb)
 	);
 
+	while(windows) {
+		window_destroyed_cb(NULL, windows->data);
+	};
+
 	return TRUE;
 }
 
