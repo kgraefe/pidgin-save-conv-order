@@ -13,7 +13,7 @@ PLUGIN_TOP := .
 PIDGIN_TREE_TOP ?=		../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
-PLUGIN_VERSION := $(shell cat ./VERSION)
+PLUGIN_VERSION := $(shell ./scripts/gen-version.sh)
 PIDGIN_VERSION := $(shell cat $(PIDGIN_TREE_TOP)/VERSION)
 
 PLUGIN_WIN32_ZIP := pidgin-save-conv-order-$(PLUGIN_VERSION)-win32.zip
@@ -31,8 +31,8 @@ config.h: VERSION configure.ac scripts/gen-mingw-config_h.sh
 # If configure.ac.in exists, we generate configure.ac. Otherwise we assume that
 # configure.ac exists (as in the release tarball).
 ifneq ("$(wildcard configure.ac.in)", "")
-configure.ac: configure.ac.in
-	./scripts/gen-configure_ac.sh > configure.ac
+configure.ac: configure.ac.in ./scripts/gen-configure_ac.sh
+	./scripts/gen-configure_ac.sh
 endif
 
 

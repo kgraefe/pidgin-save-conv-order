@@ -8,7 +8,7 @@ PLUGIN_AUTHOR=$(grep 'PLUGIN_AUTHOR' configure.ac | cut -d\" -f2)
 PLUGIN_ID=$(grep 'PLUGIN_ID' configure.ac | cut -d\" -f2)
 PLUGIN_STATIC_NAME=$(grep 'PLUGIN_STATIC_NAME' configure.ac | cut -d\" -f2)
 PLUGIN_WEBSITE=$(grep 'PLUGIN_WEBSITE' configure.ac | cut -d\" -f2)
-PLUGIN_VERSION=$(cat VERSION)
+PLUGIN_VERSION=$(scripts/gen-version.sh) || exit 1
 
 
 cat << EOF

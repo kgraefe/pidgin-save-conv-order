@@ -1,8 +1,8 @@
 #!/bin/bash
 set +x
 
-test -f VERSION || exit
-test -f configure.ac.in || exit
+VERSION=$(scripts/gen-version.sh) || exit 1
+test -f configure.ac.in || exit 1
 
 languages=""
 for f in po/*.po; do
@@ -10,7 +10,7 @@ for f in po/*.po; do
 done
 
 sed \
-	-e "s/@@VERSION@@/$(cat VERSION)/" \
+	-e "s/@@VERSION@@/$VERSION/" \
 	-e "s/@@LANGUAGES@@/$(echo $languages)/" \
 configure.ac.in >configure.ac || exit 1
 
