@@ -18,9 +18,9 @@ PIDGIN_VERSION := $(shell cat $(PIDGIN_TREE_TOP)/VERSION)
 
 PLUGIN_WIN32_ZIP := pidgin-save-conv-order-$(PLUGIN_VERSION)-win32.zip
 
-.PHONY: build install installer clean
+.PHONY: all install installer clean
 
-build: config.h
+all: config.h
 	$(MAKE) -C $(PLUGIN_SRC) -f Makefile.mingw all
 	$(MAKE) -C $(PLUGIN_PO) -f Makefile.mingw all
 
