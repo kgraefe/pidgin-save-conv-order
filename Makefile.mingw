@@ -50,7 +50,10 @@ $(PLUGIN_WIN32_ZIP): all
 		cp po/$${lang}.gmo \
 			win32-install-dir/$(PLUGIN)/locale/$${lang}/LC_MESSAGES/$(PLUGIN).mo || exit 1;  \
 	done
-	cp README.md win32-install-dir/
+	unix2dos -n README.md win32-install-dir/README.md
+	unix2dos -n CHANGES.md win32-install-dir/CHANGES.md
+	unix2dos -n AUTHORS.md win32-install-dir/AUTHORS.md
+	unix2dos -n COPYING win32-install-dir/COPYING.txt
 	rm -f $(PLUGIN_WIN32_ZIP)
 	cd win32-install-dir && \
 		zip -r ../$(PLUGIN_WIN32_ZIP) *
