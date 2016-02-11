@@ -2,9 +2,9 @@
 
 ## Installation on Windows
 
-For the binary version, extract all the contents of the ZIP file either to the
-installation directory of Pidgin (typically `C:\Program Files\Pidgin`) or to
-your .purple user directory (typically `%APPDATA%\Roaming\.purple`).
+For the binary version, extract all the contents of `pidgin-save-conv-order` in
+the ZIP file either to the installation directory of Pidgin (typically `C:\Program Files\Pidgin`)
+or to your .purple user directory (typically `%APPDATA%\Roaming\.purple`).
 
 See below for how to compile the source code version into a binary ZIP file.
 

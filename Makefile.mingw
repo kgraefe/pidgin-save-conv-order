@@ -16,7 +16,8 @@ include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 PLUGIN_VERSION := $(shell ./scripts/gen-version.sh)
 PIDGIN_VERSION := $(shell cat $(PIDGIN_TREE_TOP)/VERSION)
 
-PLUGIN_WIN32_ZIP := pidgin-save-conv-order-$(PLUGIN_VERSION)-win32.zip
+PLUGIN = pidgin-save-conv-order
+PLUGIN_WIN32_ZIP := $(PLUGIN)-$(PLUGIN_VERSION)-win32.zip
 
 .PHONY: all install installer clean
 
@@ -40,15 +41,16 @@ dist: $(PLUGIN_WIN32_ZIP)
 
 $(PLUGIN_WIN32_ZIP): all
 	rm -rf win32-install-dir
-	mkdir -p win32-install-dir/plugins
-	cp src/pidgin-save-conv-order.dll win32-install-dir/plugins
-	$(STRIP) win32-install-dir/plugins/pidgin-save-conv-order.dll
+	mkdir -p win32-install-dir/$(PLUGIN)/plugins
+	cp src/$(PLUGIN).dll win32-install-dir/$(PLUGIN)/plugins
+	$(STRIP) win32-install-dir/$(PLUGIN)/plugins/$(PLUGIN).dll
 	for f in po/*.po; do \
 		lang=$$(basename $$f .po) || exit 1; \
-		mkdir -p win32-install-dir/locale/$${lang}/LC_MESSAGES || exit 1; \
+		mkdir -p win32-install-dir/$(PLUGIN)/locale/$${lang}/LC_MESSAGES || exit 1; \
 		cp po/$${lang}.gmo \
-			win32-install-dir/locale/$${lang}/LC_MESSAGES/pidgin-save-conv-order.mo || exit 1;  \
+			win32-install-dir/$(PLUGIN)/locale/$${lang}/LC_MESSAGES/$(PLUGIN).mo || exit 1;  \
 	done
+	cp README.md win32-install-dir/
 	rm -f $(PLUGIN_WIN32_ZIP)
 	cd win32-install-dir && \
 		zip -r ../$(PLUGIN_WIN32_ZIP) *
