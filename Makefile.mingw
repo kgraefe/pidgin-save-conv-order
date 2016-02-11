@@ -38,7 +38,7 @@ endif
 
 dist: $(PLUGIN_WIN32_ZIP)
 
-$(PLUGIN_WIN32_ZIP): build
+$(PLUGIN_WIN32_ZIP): all
 	rm -rf win32-install-dir
 	mkdir -p win32-install-dir/plugins
 	cp src/pidgin-save-conv-order.dll win32-install-dir/plugins
