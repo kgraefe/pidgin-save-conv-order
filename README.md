@@ -1,5 +1,8 @@
 # Pidgin Save Conversation Order
 
+[![License](https://img.shields.io/badge/License-GPLv2-blue.svg?style=flat)](COPYING)
+[![Download](https://img.shields.io/badge/Download-Latest_Release-brightgreen.svg?style=flat)](https://github.com/kgraefe/pidgin-save-conv-order/releases/latest)
+
 ## Installation on Windows
 
 For the binary version, extract all the contents of `pidgin-save-conv-order` in
