@@ -1,5 +1,8 @@
 # Pidgin Save Conversation Order Changes
 
+## Version 1.1 (in development)
+- Add Lithuanian translation
+
 ## Version 1.0 (2016-02-11)
 - Fix: Support all conversation placement methods in Pidgin (Github #1)
 - Fix: Work correctly when loading the plugin the first time (Github #2)
