@@ -1,6 +1,6 @@
 # Pidgin Save Conversation Order Changes
 
-## Version 1.1 (in development)
+## Version 1.1 (2017-05-19)
 - Add Lithuanian translation
 
 ## Version 1.0 (2016-02-11)
